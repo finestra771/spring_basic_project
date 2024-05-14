@@ -1,6 +1,7 @@
 package org.sparta.spring_basic_project.controller;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import jakarta.validation.Valid;
 import org.sparta.spring_basic_project.dto.TodoRequestDto;
 import org.sparta.spring_basic_project.dto.TodoResponseDto;
 import org.sparta.spring_basic_project.repository.TodoRepository;
@@ -20,7 +21,7 @@ public class TodoController {
     }
 
     @PostMapping("/register")
-    public TodoResponseDto register(@RequestBody TodoRequestDto todoRequestDto){
+    public TodoResponseDto register(@RequestBody @Valid TodoRequestDto todoRequestDto){
         return todoService.createTodo(todoRequestDto);
     }
 
@@ -35,17 +36,17 @@ public class TodoController {
     }
 
     @PutMapping("/update/title/{id}")
-    public int updateTitle(@PathVariable int id, @RequestBody TodoRequestDto todoRequestDto){
+    public int updateTitle(@PathVariable int id, @RequestBody @Valid TodoRequestDto todoRequestDto){
         return todoService.updateTodoTitle(id, todoRequestDto);
     }
 
     @PutMapping("/update/content/{id}")
-    public int updateContent(@PathVariable int id, @RequestBody TodoRequestDto todoRequestDto){
+    public int updateContent(@PathVariable int id, @RequestBody @Valid TodoRequestDto todoRequestDto){
         return todoService.updateTodoContent(id, todoRequestDto);
     }
 
     @PutMapping("/update/manager/{id}")
-    public int updateManager(@PathVariable int id, @RequestBody TodoRequestDto todoRequestDto){
+    public int updateManager(@PathVariable int id, @RequestBody @Valid TodoRequestDto todoRequestDto){
         return todoService.updateTodoManager(id, todoRequestDto);
     }
 

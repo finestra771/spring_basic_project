@@ -1,22 +1,26 @@
 package org.sparta.spring_basic_project.service;
 
+import jakarta.validation.Valid;
 import org.sparta.spring_basic_project.dto.TodoRequestDto;
 import org.sparta.spring_basic_project.dto.TodoResponseDto;
 import org.sparta.spring_basic_project.entity.Todo;
 import org.sparta.spring_basic_project.repository.TodoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Validated
 public class TodoService {
     private final TodoRepository todoRepository;
     public TodoService(TodoRepository todoRepository) {
         this.todoRepository = todoRepository;
     }
 
-    public TodoResponseDto createTodo(TodoRequestDto todoRequestDto) {
+    public TodoResponseDto createTodo(@Valid TodoRequestDto todoRequestDto) {
         Todo todo = new Todo(todoRequestDto);
 
         Todo savedTodo = todoRepository.save(todo);
@@ -33,17 +37,11 @@ public class TodoService {
     }
 
     public List<TodoResponseDto> getAllTodos() {
-        List<Todo> todos = todoRepository.findAll();
-        List<TodoResponseDto> todoResponseDtos = new ArrayList<>();
-        for (Todo todo : todos) {
-            TodoResponseDto todoResponseDto = new TodoResponseDto(todo);
-            todoResponseDtos.add(todoResponseDto);
-        }
-        return todoResponseDtos;
+        return todoRepository.findAllByOrderByCreatedAtDesc().stream().map(TodoResponseDto::new).toList();
     }
 
     @Transactional
-    public int updateTodoTitle(Integer id, TodoRequestDto todoRequestDto) {
+    public int updateTodoTitle(Integer id, @Valid TodoRequestDto todoRequestDto) {
         Todo todo=findTodo(id);
         if(todo.getPassword().equals(todoRequestDto.getPassword())) {
             todo.setTitle(todoRequestDto.getTitle());
