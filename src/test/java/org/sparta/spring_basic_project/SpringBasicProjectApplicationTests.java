@@ -12,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 import org.sparta.spring_basic_project.controller.TodoController;
 import org.sparta.spring_basic_project.dto.TodoRequestDto;
 import org.sparta.spring_basic_project.dto.TodoResponseDto;
+import org.sparta.spring_basic_project.error.TodoNotFoundException;
 import org.sparta.spring_basic_project.repository.TodoRepository;
 import org.sparta.spring_basic_project.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -55,7 +57,6 @@ class SpringBasicProjectApplicationTests {
         TodoResponseDto response=todoResponse();
 
         doReturn(response).when(todoService).createTodo(any());
-//        when(todoService.createTodo(any())).thenReturn(response);
         String json = new Gson().toJson(request);
         System.out.println(json);
         ResultActions resultActions = mockMvc.perform(
@@ -74,6 +75,15 @@ class SpringBasicProjectApplicationTests {
                 .andReturn();
     }
 
+    @Test
+    void todoNotFound() throws Exception {
+        int nonExistingTodoId = 9999; // 존재하지 않는 Todo 항목의 ID
+        doThrow(new TodoNotFoundException("Todo not found with id: " + nonExistingTodoId))
+                .when(todoService).getTodoById(nonExistingTodoId);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/todo/{id}", nonExistingTodoId))
+                .andExpect(status().isNotFound());
+    }
     private TodoRequestDto todoRequest(){
         return TodoRequestDto.builder()
                 .title("test1")

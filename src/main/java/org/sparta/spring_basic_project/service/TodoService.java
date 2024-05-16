@@ -44,7 +44,7 @@ public class TodoService {
     public int updateTodoTitle(Integer id, @Valid TodoRequestDto todoRequestDto) {
         Todo todo=findTodo(id);
         if(todo.getPassword().equals(todoRequestDto.getPassword())) {
-            todo.setTitle(todoRequestDto.getTitle());
+            todo.setInfo(id, todoRequestDto.getTitle(), todoRequestDto.getContent(), todoRequestDto.getManager(), todoRequestDto.getPassword());
             todoRepository.save(todo);
             return todo.getId();
         }
@@ -57,7 +57,7 @@ public class TodoService {
     public int updateTodoContent(int id, TodoRequestDto todoRequestDto) {
         Todo todo=findTodo(id);
         if(todo.getPassword().equals(todoRequestDto.getPassword())) {
-            todo.setContent(todoRequestDto.getContent());
+            todo.setInfo(id, todoRequestDto.getTitle(), todoRequestDto.getContent(), todoRequestDto.getManager(), todoRequestDto.getPassword());
             todoRepository.save(todo);
             return todo.getId();
         }
@@ -69,7 +69,7 @@ public class TodoService {
     public int updateTodoManager(int id, TodoRequestDto todoRequestDto) {
         Todo todo=findTodo(id);
         if(todoRequestDto.getPassword().equals(todo.getPassword())) {
-            todo.setManager(todoRequestDto.getManager());
+            todo.setInfo(id, todoRequestDto.getTitle(), todoRequestDto.getContent(), todoRequestDto.getManager(), todoRequestDto.getPassword());
             todoRepository.save(todo);
             return todo.getId();
         }

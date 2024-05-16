@@ -8,9 +8,7 @@ import org.sparta.spring_basic_project.dto.TodoRequestDto;
 
 @Entity
 @Getter
-@Setter
 @Table(name="todo")
-@NoArgsConstructor
 public class Todo extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +22,27 @@ public class Todo extends Timestamped{
     @Column(unique = true, nullable = false)
     private String password;
 
+    public Todo(){
+        this.id=0;
+        this.title="";
+        this.content="";
+        this.manager="";
+        this.password="";
+    }
+
     public Todo(TodoRequestDto todoRequestDto){
         this.title = todoRequestDto.getTitle();
         this.content = todoRequestDto.getContent();
         this.manager = todoRequestDto.getManager();
         this.password = todoRequestDto.getPassword();
+    }
+
+    public void setInfo(int id, String title, String content, String manager, String password){
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.manager = manager;
+        this.password = password;
     }
 
 }
