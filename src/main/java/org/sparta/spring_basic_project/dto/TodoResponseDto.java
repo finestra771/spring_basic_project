@@ -16,14 +16,11 @@ public class TodoResponseDto {
     private String title;
     private String content;
     private String manager;
-    @JsonIgnore
-    private String password;
 
     public TodoResponseDto(Todo todo) {
         this.id = todo.getId();
         this.title = todo.getTitle();
         this.content = todo.getContent();
         this.manager = todo.getManager();
-        this.password = todo.getPassword();
     }
 }
