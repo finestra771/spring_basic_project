@@ -16,6 +16,7 @@ import org.sparta.spring_basic_project.repository.TodoRepository;
 import org.sparta.spring_basic_project.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -28,14 +29,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@AutoConfigureWebTestClient
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
+@AutoConfigureMockMvc
 class SpringBasicProjectApplicationTests {
 
     private TodoRepository todoRepository;
@@ -43,7 +40,6 @@ class SpringBasicProjectApplicationTests {
     private TodoController todoController;
     private WebTestClient webTestClient;
     private MockMvc mockMvc;
-    @Autowired
     @Mock
     private TodoService todoService;
 
@@ -71,10 +67,10 @@ class SpringBasicProjectApplicationTests {
         // 응답의 구조와 값이 올바른지 확인하는 코드는 그대로 유지
         MvcResult mvcResult = resultActions.andDo(print())
                 .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("title").value(response.getTitle()))
                 .andExpect(jsonPath("content").value(response.getContent()))
                 .andExpect(jsonPath("manager").value(response.getManager()))
-                .andExpect(jsonPath("password").value(response.getPassword()))
                 .andReturn();
     }
 
