@@ -16,7 +16,6 @@ public class TodoRequestDto {
     private String title;
     private String content;
     @Email(message = "이메일 형식이 맞지 않습니다.")
-    @Email(message = "이메일 형식이 맞지 않습니다.")
     private String manager;
     @NotBlank(message="비밀번호를 입력해주세요.")
     private String password;

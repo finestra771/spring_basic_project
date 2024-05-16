@@ -98,7 +98,6 @@ class SpringBasicProjectApplicationTests {
                 .title("test1")
                 .content("testcontent")
                 .manager("test@example.com")
-                .password("test")
                 .build();
     }
 
