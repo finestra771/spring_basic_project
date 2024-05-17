@@ -1,0 +1,16 @@
+<mxfile host="app.diagrams.net" modified="2024-05-16T12:33:51.658Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" etag="BOUmO36tsCT1KTojEEf4" version="24.4.2" type="github">
+  <diagram name="페이지-1" id="eqhRolPKBjo177OuY_oy">
+    <mxGraphModel dx="1434" dy="795" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ojWt40FFLvQ0DBRLL3Ez-1" value="Todo" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="344" y="60" width="166" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="ojWt40FFLvQ0DBRLL3Ez-2" value="1. Todo Id(PK) (int)&lt;div&gt;2. Title (String)&lt;/div&gt;&lt;div&gt;3. Content(String)&lt;/div&gt;&lt;div&gt;4. Manager(String)&lt;/div&gt;&lt;div&gt;5. Password(String)&lt;/div&gt;&lt;div&gt;6. CreatedAt(Date)&lt;/div&gt;" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;" vertex="1" parent="ojWt40FFLvQ0DBRLL3Ez-1">
+          <mxGeometry y="50" width="166" height="130" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
