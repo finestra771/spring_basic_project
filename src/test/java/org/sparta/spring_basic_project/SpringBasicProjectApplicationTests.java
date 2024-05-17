@@ -37,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class SpringBasicProjectApplicationTests {
 
-    private TodoRepository todoRepository;
     @InjectMocks
     private TodoController todoController;
     private WebTestClient webTestClient;

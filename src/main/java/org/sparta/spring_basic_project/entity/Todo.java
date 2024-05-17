@@ -8,6 +8,7 @@ import org.sparta.spring_basic_project.dto.TodoRequestDto;
 
 @Entity
 @Getter
+@Setter
 @Table(name="todo")
 public class Todo extends Timestamped{
     @Id

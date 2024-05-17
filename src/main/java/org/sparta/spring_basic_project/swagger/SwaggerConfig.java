@@ -2,11 +2,12 @@ package org.sparta.spring_basic_project.swagger;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
+import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+@Generated
 @OpenAPIDefinition(
         info = @Info(title = "TodoAPI",
                 description = "TodoList api명세서입니다.",

@@ -27,7 +27,7 @@ public class FileController {
                              MultipartFile uploadFile,
                              HttpServletRequest req) {
 
-        System.out.println("HelloController fileUpload " + new Date());
+        System.out.println("FileController fileUpload " + new Date());
         List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "gif");
         String path = "/Users/hyunacho/Downloads";
         String filename = uploadFile.getOriginalFilename();
@@ -60,7 +60,7 @@ public class FileController {
 
     @RequestMapping(value = "/fileDownload")
     public ResponseEntity<InputStreamResource> download(String filename, HttpServletRequest req) throws Exception{
-        System.out.println("HelloController download " + new Date());
+        System.out.println("FileController download " + new Date());
 
         String path = "/Users/hyunacho/Downloads";
         MediaType mediaType = MediaTypeUtiles.getMediaTypeForFileName(this.servletContext, filename);
