@@ -29,7 +29,7 @@ public class CommentController {
 
     @PutMapping("/comment/{commentId}")
     public CommentResponseDto updateComment(@PathVariable int commentId, @RequestBody CommentRequestDto commentRequestDto) {
-        return commentService.updateComment(commentRequestDto);
+        return commentService.updateComment(commentId, commentRequestDto);
     }
 
     @DeleteMapping("/comment/{commentId}")

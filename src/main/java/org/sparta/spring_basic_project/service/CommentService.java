@@ -9,6 +9,7 @@ import org.sparta.spring_basic_project.repository.TodoRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,10 +31,15 @@ public class CommentService {
     }
 
 
-    public CommentResponseDto updateComment(CommentRequestDto commentRequestDto) {
-        Todo todo=findTodoById(commentRequestDto.getTodoId());
-        Comment comment = new Comment(commentRequestDto, todo);
-        return new CommentResponseDto(commentRepository.save(comment));
+    public CommentResponseDto updateComment(int commentId, CommentRequestDto commentRequestDto) {
+        Optional<Comment> optionalComment = commentRepository.findById(commentId);
+        if (!optionalComment.isPresent()) {
+            throw new IllegalArgumentException("Comment not found with id " + commentId);
+        }
+        Comment comment = optionalComment.get();
+        comment.setContent(commentRequestDto.getContent());
+        Comment updatedComment = commentRepository.save(comment);
+        return new CommentResponseDto(updatedComment);
     }
 
     public List<CommentResponseDto> getAllCommentsByTodoId(int todoId) {
@@ -47,6 +53,10 @@ public class CommentService {
         return todoRepository.findById(id).orElseThrow(()->
         new IllegalArgumentException("없습니다.")
         );
+    }
+
+    public Comment findCommentById(int id) {
+        return todoRepository.findCommentById(id);
     }
 
     public void deleteComment(int commentId) {

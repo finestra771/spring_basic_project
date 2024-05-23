@@ -2,11 +2,13 @@ package org.sparta.spring_basic_project.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.sparta.spring_basic_project.dto.CommentRequestDto;
 
 @Entity
 @Table(name="comment")
 @Getter
+@Setter
 public class Comment extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
