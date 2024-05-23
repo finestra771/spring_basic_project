@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.sparta.spring_basic_project.dto.TodoRequestDto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -22,6 +25,8 @@ public class Todo extends Timestamped{
     private String manager;
     @Column(nullable = false)
     private String password;
+    @OneToMany(mappedBy = "todo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
     public Todo(){
         this.id=0;
         this.title="";

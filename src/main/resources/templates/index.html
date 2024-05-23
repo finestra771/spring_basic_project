@@ -85,15 +85,10 @@
     let updateTodoId = null;
 
     document.addEventListener('DOMContentLoaded', function() {
+        const API_BASE_URL = 'http://localhost:8080/todo'; // 실제 API URL로 변경
         const todoList = document.getElementById('todo-list');
-        const registerForm = document.getElementById('register-form');
-        const deleteModal = document.getElementById('deleteModal');
-        const confirmDeleteButton = document.getElementById('confirm-delete');
-        const confirmUpdateTitleButton = document.getElementById('confirm-update-title');
-        const confirmUpdateContentButton = document.getElementById('confirm-update-content');
-        const confirmUpdateManagerButton = document.getElementById('confirm-update-manager');
 
-        // Fetch all todos
+        // Fetch all todos with comments
         function fetchTodos() {
             fetch(`${API_BASE_URL}/view`)
                 .then(response => response.json())
@@ -103,29 +98,71 @@
                         const listItem = document.createElement('li');
                         listItem.className = 'todo-item';
                         listItem.innerHTML = `
-                            <div>
-                                <span>${todo.title} - ${todo.content} (Manager: ${todo.manager})</span>
-                                <button onclick="promptUpdateTitle(${todo.id})">Update Title</button>
-                                <button onclick="promptUpdateContent(${todo.id})">Update Content</button>
-                                <button onclick="promptUpdateManager(${todo.id})">Update Manager</button>
-                                <button onclick="promptDelete(${todo.id})">Delete</button>
+                        <div>
+                            <span>${todo.title} - ${todo.content} (Manager: ${todo.manager})</span>
+                            <button onclick="promptUpdateTitle(${todo.id})">Update Title</button>
+                            <button onclick="promptUpdateContent(${todo.id})">Update Content</button>
+                            <button onclick="promptUpdateManager(${todo.id})">Update Manager</button>
+                            <button onclick="promptDelete(${todo.id})">Delete</button>
+                        </div>
+                        <div class="comments">
+                            <h4>Comments</h4>
+                            <div id="comments-${todo.id}"></div>
+                            <div class="comment">
+                                <input type="text" id="comment-input-${todo.id}" placeholder="Add a comment" />
+                                <button onclick="addComment(${todo.id})">Add</button>
                             </div>
-                            <!--<div class="comments">
-                                <h4>Comments</h4>
-                                <div id="comments-${todo.id}">
-                                    ${todo.comments.map(comment => `<div class="comment">${comment}</div>`).join('')}
-                                </div>
-                                <div class="comment">
-                                    <input type="text" id="comment-input-${todo.id}" placeholder="Add a comment" />
-                                    <button onclick="addComment(${todo.id})">Add</button>
-                                </div>
-                            </div>-->
-                        `;
+                        </div>
+                    `;
+                        fetchComments(todo.id);
                         todoList.appendChild(listItem);
                     });
                 })
                 .catch(error => console.error('Error fetching todos:', error));
         }
+
+        // Fetch comments for a todo
+        function fetchComments(todoId) {
+            fetch(`${API_BASE_URL}/comment/${todoId}`)
+                .then(response => response.json())
+                .then(comments => {
+                    const commentsDiv = document.getElementById(`comments-${todoId}`);
+                    commentsDiv.innerHTML = comments.map(comment => `
+                    <div class="comment">
+                        <div>${comment.comment}</div>
+                        <button onclick="promptUpdateComment(${todoId}, ${comment.id})">Edit</button>
+                        <button onclick="deleteComment(${todoId}, ${comment.id})">Delete</button>
+                    </div>
+                `).join('');
+                })
+                .catch(error => console.error('Error fetching comments:', error));
+        }
+
+        // Initial fetch
+        fetchTodos();
+
+        // Add comment
+        window.addComment = function(todoId) {
+            const commentInput = document.getElementById(`comment-input-${todoId}`);
+            const comment = commentInput.value.trim();
+
+            if (comment) {
+                fetch(`${API_BASE_URL}/comment/${todoId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ todoId: todoId, content: comment })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        fetchComments(todoId);
+                    })
+                    .catch(error => console.error('Error adding comment:', error));
+            }
+        };
+
+        // Other functions for promptUpdateTitle, promptUpdateContent, promptUpdateManager, promptDelete
 
         // Initial fetch
         fetchTodos();
@@ -194,7 +231,6 @@
                 deleteModal.style.display = 'none';
             }
         };
-
         // Confirm delete
         confirmDeleteButton.addEventListener('click', function() {
             const password = document.getElementById('delete-password').value;
@@ -281,18 +317,20 @@
                 .catch(error => console.error('Error updating todo:', error));
         });
 
+
+
         // Add comment
         window.addComment = function(todoId) {
             const commentInput = document.getElementById(`comment-input-${todoId}`);
-            const comment = commentInput.value.trim();
+            const content = commentInput.value.trim();
 
-            if (comment) {
+            if (content) {
                 fetch(`${API_BASE_URL}/comment/${todoId}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ comment })
+                    body: JSON.stringify({ todoId: todoId, content })
                 })
                     .then(response => response.json())
                     .then(data => {
@@ -300,6 +338,44 @@
                         fetchTodos();
                     })
                     .catch(error => console.error('Error adding comment:', error));
+            }
+        };
+        // Edit comment
+        window.promptUpdateComment = function(todoId, commentId) {
+            const newComment = prompt('Enter new comment:');
+            if (newComment !== null) {
+                fetch(`${API_BASE_URL}/comment/${commentId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ comment: newComment })
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            fetchComments(todoId);
+                        } else {
+                            console.error('Failed to update comment');
+                        }
+                    })
+                    .catch(error => console.error('Error updating comment:', error));
+            }
+        };
+
+        // Delete comment
+        window.deleteComment = function(todoId, commentId) {
+            if (confirm('Are you sure you want to delete this comment?')) {
+                fetch(`${API_BASE_URL}/comment/${commentId}`, {
+                    method: 'DELETE'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            fetchComments(todoId);
+                        } else {
+                            console.error('Failed to delete comment');
+                        }
+                    })
+                    .catch(error => console.error('Error deleting comment:', error));
             }
         };
     });

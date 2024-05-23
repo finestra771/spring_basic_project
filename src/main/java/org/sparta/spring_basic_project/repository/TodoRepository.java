@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface TodoRepository extends JpaRepository<Todo, Integer> {
     List<Todo> findAllByOrderByCreatedAtDesc();
+    Todo findTodoById(int id);
 }
