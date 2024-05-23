@@ -130,7 +130,7 @@ public class TodoServiceTest {
         Todo todo = new Todo();
         todo.setId(id);
         todo.setPassword("Correct Password");
-        when(todoRepository.findById(id)).thenReturn(java.util.Optional.of(todo));
+        when(todoRepository.findById(id)).thenReturn(java.util.Optional.of(todo)); //eq(id)
         when(todoRepository.save(any())).thenReturn(todo);
         int updatedId = todoService.updateTodoContent(id, todoRequestDto);
         assertEquals(id, updatedId);

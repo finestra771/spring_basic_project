@@ -8,6 +8,7 @@ import org.sparta.spring_basic_project.dto.TodoRequestDto;
 
 @Entity
 @Getter
+@Setter
 @Table(name="todo")
 public class Todo extends Timestamped{
     @Id
@@ -34,20 +35,6 @@ public class Todo extends Timestamped{
         this.content = todoRequestDto.getContent();
         this.manager = todoRequestDto.getManager();
         this.password = todoRequestDto.getPassword();
-    }
-
-    public void setInfo(int id, String title, String content, String manager, String password){
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.manager = manager;
-        this.password = password;
-    }
-    public void setId(int id){
-        this.id = id;
-    }
-    public void setPassword(String password){
-        this.password = password;
     }
 
 }

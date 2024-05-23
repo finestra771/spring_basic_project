@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo Management</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f7f7f7; }
+        h1, h2 { color: #333; }
+        .container { margin-top: 50px; }
+        .todo-item { display: flex; flex-direction: column; background: #fff; padding: 10px; border-radius: 5px; margin-bottom: 10px; }
+        .todo-item button { background: #ff4b4b; color: #fff; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+        .todo-item button:hover { background: #ff0000; }
+        .modal { display: none; position: fixed; z-index: 1; padding-top: 100px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgb(0,0,0); background-color: rgba(0,0,0,0.4); }
+        .modal-content { background-color: #fefefe; margin: auto; padding: 20px; border: 1px solid #888; width: 80%; max-width: 500px; border-radius: 10px; }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; }
+        .close:hover, .close:focus { color: black; text-decoration: none; cursor: pointer; }
+        .comments { margin-top: 10px; }
+        .comment { padding: 5px 0; border-bottom: 1px solid #ddd; }
+        .comment input { width: calc(100% - 50px); }
+        .comment button { width: 40px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center">Todo Management</h1>
+    <h2>Register Todo</h2>
+    <form id="register-form" class="mb-4">
+        <div class="form-group">
+            <input type="text" id="title" class="form-control" placeholder="Title" required>
+        </div>
+        <div class="form-group">
+            <input type="text" id="content" class="form-control" placeholder="Content" required>
+        </div>
+        <div class="form-group">
+            <input type="text" id="manager" class="form-control" placeholder="Manager" required>
+        </div>
+        <div class="form-group">
+            <input type="text" id="password" class="form-control" placeholder="Password" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+    <h2>Todo List</h2>
+    <ul id="todo-list" class="list-unstyled"></ul>
+</div>
+<div id="updateTitleModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Update Todo</h2>
+        <input type="text" id="update-title" class="form-control mb-2" placeholder="Title" required>
+        <input type="text" id="update-password-title" class="form-control mb-2" placeholder="Password" required>
+        <button id="confirm-update-title" class="btn btn-primary mt-3">Update</button>
+    </div>
+</div>
+<div id="updateContentModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Update Todo</h2>
+        <input type="text" id="update-content" class="form-control mb-2" placeholder="Content" required>
+        <input type="text" id="update-password-content" class="form-control mb-2" placeholder="Password" required>
+        <button id="confirm-update-content" class="btn btn-primary mt-3">Update</button>
+    </div>
+</div>
+<div id="updateManagerModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Update Manager</h2>
+        <input type="text" id="update-manager" class="form-control mb-2" placeholder="Manager" required>
+        <input type="text" id="update-password-manager" class="form-control mb-2" placeholder="Password" required>
+        <button id="confirm-update-manager" class="btn btn-primary mt-3">Update</button>
+    </div>
+</div>
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Enter Password to Delete</h2>
+        <input type="password" id="delete-password" class="form-control" placeholder="Password" required>
+        <button id="confirm-delete" class="btn btn-danger mt-3">Delete</button>
+    </div>
+</div>
+<script>
+    const API_BASE_URL = 'http://localhost:8080/todo'; // 실제 API URL로 변경
+    let deleteTodoId = null;
+    let updateTodoId = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const todoList = document.getElementById('todo-list');
+        const registerForm = document.getElementById('register-form');
+        const deleteModal = document.getElementById('deleteModal');
+        const confirmDeleteButton = document.getElementById('confirm-delete');
+        const confirmUpdateTitleButton = document.getElementById('confirm-update-title');
+        const confirmUpdateContentButton = document.getElementById('confirm-update-content');
+        const confirmUpdateManagerButton = document.getElementById('confirm-update-manager');
+
+        // Fetch all todos
+        function fetchTodos() {
+            fetch(`${API_BASE_URL}/view`)
+                .then(response => response.json())
+                .then(data => {
+                    todoList.innerHTML = '';
+                    data.forEach(todo => {
+                        const listItem = document.createElement('li');
+                        listItem.className = 'todo-item';
+                        listItem.innerHTML = `
+                            <div>
+                                <span>${todo.title} - ${todo.content} (Manager: ${todo.manager})</span>
+                                <button onclick="promptUpdateTitle(${todo.id})">Update Title</button>
+                                <button onclick="promptUpdateContent(${todo.id})">Update Content</button>
+                                <button onclick="promptUpdateManager(${todo.id})">Update Manager</button>
+                                <button onclick="promptDelete(${todo.id})">Delete</button>
+                            </div>
+                            <!--<div class="comments">
+                                <h4>Comments</h4>
+                                <div id="comments-${todo.id}">
+                                    ${todo.comments.map(comment => `<div class="comment">${comment}</div>`).join('')}
+                                </div>
+                                <div class="comment">
+                                    <input type="text" id="comment-input-${todo.id}" placeholder="Add a comment" />
+                                    <button onclick="addComment(${todo.id})">Add</button>
+                                </div>
+                            </div>-->
+                        `;
+                        todoList.appendChild(listItem);
+                    });
+                })
+                .catch(error => console.error('Error fetching todos:', error));
+        }
+
+        // Initial fetch
+        fetchTodos();
+
+        // Register new todo
+        registerForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const title = document.getElementById('title').value;
+            const content = document.getElementById('content').value;
+            const manager = document.getElementById('manager').value;
+            const password = document.getElementById('password').value;
+
+            fetch(`${API_BASE_URL}/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, content, manager, password })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Todo registered:', data);
+                    fetchTodos();
+                    registerForm.reset();
+                })
+                .catch(error => console.error('Error registering todo:', error));
+        });
+
+        // Prompt delete
+        window.promptDelete = function(id) {
+            deleteTodoId = id;
+            deleteModal.style.display = 'block';
+        };
+
+        // Prompt update title
+        window.promptUpdateTitle = function(id) {
+            updateTodoId = id;
+            document.getElementById('update-title').value = '';
+            document.getElementById('update-password-title').value = '';
+            document.getElementById('updateTitleModal').style.display = 'block';
+        };
+
+        // Prompt update content
+        window.promptUpdateContent = function(id) {
+            updateTodoId = id;
+            document.getElementById('update-content').value = '';
+            document.getElementById('update-password-content').value = '';
+            document.getElementById('updateContentModal').style.display = 'block';
+        };
+
+        // Prompt update manager
+        window.promptUpdateManager = function(id) {
+            updateTodoId = id;
+            document.getElementById('update-manager').value = '';
+            document.getElementById('update-password-manager').value = '';
+            document.getElementById('updateManagerModal').style.display = 'block';
+        };
+
+        // Close modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target == deleteModal) {
+                deleteModal.style.display = 'none';
+            }
+        };
+
+        // Confirm delete
+        confirmDeleteButton.addEventListener('click', function() {
+            const password = document.getElementById('delete-password').value;
+
+            fetch(`${API_BASE_URL}/delete/${deleteTodoId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ password: password })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        console.log('Todo deleted');
+                        fetchTodos();
+                        deleteModal.style.display = 'none';
+                    } else {
+                        console.error('Error deleting todo');
+                    }
+                })
+                .catch(error => console.error('Error deleting todo:', error));
+        });
+
+        // Confirm update title
+        confirmUpdateTitleButton.addEventListener('click', function() {
+            const title = document.getElementById('update-title').value;
+            const password = document.getElementById('update-password-title').value;
+
+            fetch(`${API_BASE_URL}/update/title/${updateTodoId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, password })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Todo updated:', data);
+                    fetchTodos();
+                    document.getElementById('updateTitleModal').style.display = 'none';
+                })
+                .catch(error => console.error('Error updating todo:', error));
+        });
+
+        // Confirm update content
+        confirmUpdateContentButton.addEventListener('click', function() {
+            const content = document.getElementById('update-content').value;
+            const password = document.getElementById('update-password-content').value;
+
+            fetch(`${API_BASE_URL}/update/content/${updateTodoId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content, password })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Todo updated:', data);
+                    fetchTodos();
+                    document.getElementById('updateContentModal').style.display = 'none';
+                })
+                .catch(error => console.error('Error updating todo:', error));
+        });
+
+        // Confirm update manager
+        confirmUpdateManagerButton.addEventListener('click', function() {
+            const manager = document.getElementById('update-manager').value;
+            const password = document.getElementById('update-password-manager').value;
+
+            fetch(`${API_BASE_URL}/update/manager/${updateTodoId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ manager, password })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Todo updated:', data);
+                    fetchTodos();
+                    document.getElementById('updateManagerModal').style.display = 'none';
+                })
+                .catch(error => console.error('Error updating todo:', error));
+        });
+
+        // Add comment
+        window.addComment = function(todoId) {
+            const commentInput = document.getElementById(`comment-input-${todoId}`);
+            const comment = commentInput.value.trim();
+
+            if (comment) {
+                fetch(`${API_BASE_URL}/comment/${todoId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ comment })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Comment added:', data);
+                        fetchTodos();
+                    })
+                    .catch(error => console.error('Error adding comment:', error));
+            }
+        };
+    });
+</script>
+</body>
+</html>

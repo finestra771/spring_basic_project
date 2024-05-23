@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -43,7 +44,7 @@ public class TodoService {
     public int updateTodoTitle(Integer id, @Valid TodoRequestDto todoRequestDto) {
         Todo todo=findTodo(id);
         if(todo.getPassword().equals(todoRequestDto.getPassword())) {
-            todo.setInfo(id, todoRequestDto.getTitle(), todoRequestDto.getContent(), todoRequestDto.getManager(), todoRequestDto.getPassword());
+            todo.setTitle(todoRequestDto.getTitle());
             todoRepository.save(todo);
             return todo.getId();
         }
@@ -56,7 +57,7 @@ public class TodoService {
     public int updateTodoContent(int id, TodoRequestDto todoRequestDto) {
         Todo todo=findTodo(id);
         if(todo.getPassword().equals(todoRequestDto.getPassword())) {
-            todo.setInfo(id, todoRequestDto.getTitle(), todoRequestDto.getContent(), todoRequestDto.getManager(), todoRequestDto.getPassword());
+            todo.setContent(todoRequestDto.getContent());
             todoRepository.save(todo);
             return todo.getId();
         }
@@ -68,7 +69,7 @@ public class TodoService {
     public int updateTodoManager(int id, TodoRequestDto todoRequestDto) {
         Todo todo=findTodo(id);
         if(todoRequestDto.getPassword().equals(todo.getPassword())) {
-            todo.setInfo(id, todoRequestDto.getTitle(), todoRequestDto.getContent(), todoRequestDto.getManager(), todoRequestDto.getPassword());
+            todo.setManager(todoRequestDto.getManager());
             todoRepository.save(todo);
             return todo.getId();
         }
