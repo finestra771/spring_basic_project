@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"
+            integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
+    <title>로그인 페이지</title>
+</head>
+<body>
+<div id="login-form">
+    <div id="login-title">Log into Select Shop</div>
+    <br>
+    <button id="login-id-btn" onclick="location.href='/api/user/signup'">
+        회원 가입하기
+    </button>
+    <div>
+        <div class="login-id-label">아이디</div>
+        <input type="text" name="username" id="username" class="login-input-box">
+
+        <div class="login-id-label">비밀번호</div>
+        <input type="password" name="password" id="password" class="login-input-box">
+
+        <button id="login-id-submit" onclick="onLogin()">로그인</button>
+    </div>
+    <div id="login-failed" style="display:none" class="alert alert-danger" role="alert">로그인에 실패하였습니다.</div>
+</div>
+
+<script>
+    let authHeader = null;
+
+    $(document).ready(function () {
+        // Initialize the authorization header when the login page loads
+        authHeader = null;
+    });
+
+    const host = 'http://' + window.location.host;
+
+    function onLogin() {
+        let username = $('#username').val();
+        let password = $('#password').val();
+
+        $.ajax({
+            type: "POST",
+            url: `/api/user/login`,
+            contentType: "application/json",
+            data: JSON.stringify({ username: username, password: password }),
+            success: function (res, status, xhr) {
+                // Set the authorization header in the session storage
+                sessionStorage.setItem('Authorization', xhr.getResponseHeader('Authorization'));
+                window.location.href = host;
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert("Login Fail");
+                window.location.href = host + '/api/user/login-page?error';
+            }
+        });
+    }
+
+    // // Add the authorization header to all AJAX requests
+    // $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
+    //     if (authHeader) {
+    //         jqXHR.setRequestHeader('Authorization', 'Bearer ' + authHeader);
+    //     }
+    // });
+    //
+    // // Set the authorization header in the session storage
+    // sessionStorage.setItem('Authorization', 'Bearer ' + authHeader);
+    //
+    // // Retrieve the authorization header from the session storage in subsequent requests
+    // $(document).ajaxSend(function (event, jqXHR, settings) {
+    //     let authHeader = sessionStorage.getItem('Authorization');
+    //     if (authHeader) {
+    //         jqXHR.setRequestHeader('Authorization', authHeader);
+    //     }
+    // });
+</script>
+</body>
+</html>

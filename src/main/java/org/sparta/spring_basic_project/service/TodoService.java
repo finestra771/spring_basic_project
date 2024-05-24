@@ -16,6 +16,7 @@ import java.util.List;
 @Validated
 public class TodoService {
     private final TodoRepository todoRepository;
+
     public TodoService(TodoRepository todoRepository) {
         this.todoRepository = todoRepository;
     }
@@ -31,7 +32,7 @@ public class TodoService {
     }
 
     public TodoResponseDto getTodoById(int id) {
-        Todo todo=findTodo(id);
+        Todo todo = findTodo(id);
         TodoResponseDto todoResponseDto = new TodoResponseDto(todo);
         return todoResponseDto;
     }
@@ -47,49 +48,47 @@ public class TodoService {
             todo.setTitle(todoRequestDto.getTitle());
             todoRepository.save(todo);
             return todo.getId();
-        }
-        else{
+        } else {
             throw new IllegalArgumentException("Wrong password");
         }
     }
 
     @Transactional
     public int updateTodoContent(int id, TodoRequestDto todoRequestDto) {
-        Todo todo=findTodo(id);
-        if(todo.getPassword().equals(todoRequestDto.getPassword())) {
+        Todo todo = findTodo(id);
+        if (todo.getPassword().equals(todoRequestDto.getPassword())) {
             todo.setContent(todoRequestDto.getContent());
             todoRepository.save(todo);
             return todo.getId();
-        }
-        else{
+        } else {
             throw new IllegalArgumentException("Wrong password");
         }
     }
+
     @Transactional
     public int updateTodoManager(int id, TodoRequestDto todoRequestDto) {
-        Todo todo=findTodo(id);
-        if(todoRequestDto.getPassword().equals(todo.getPassword())) {
+        Todo todo = findTodo(id);
+        if (todoRequestDto.getPassword().equals(todo.getPassword())) {
             todo.setManager(todoRequestDto.getManager());
             todoRepository.save(todo);
             return todo.getId();
-        }
-        else{
+        } else {
             throw new IllegalArgumentException("Wrong password");
         }
     }
+
     public int deleteTodo(Integer id, TodoRequestDto todoRequestDto) {
-        Todo todo=findTodo(id);
-        if(todo.getPassword().equals(todoRequestDto.getPassword())) {
+        Todo todo = findTodo(id);
+        if (todo.getPassword().equals(todoRequestDto.getPassword())) {
             todoRepository.delete(todo);
             return id;
-        }
-        else{
+        } else {
             throw new IllegalArgumentException("Wrong password");
         }
     }
 
     public Todo findTodo(Integer id) {
-        Todo todo=todoRepository.findById(id).orElseThrow(()->new IllegalArgumentException("선택한 객체가 존재하지 않습니다."));
+        Todo todo = todoRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("선택한 객체가 존재하지 않습니다."));
         return todo;
     }
 

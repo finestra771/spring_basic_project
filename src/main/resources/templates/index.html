@@ -97,6 +97,7 @@
 
     document.addEventListener('DOMContentLoaded', function() {
         const todoList = document.getElementById('todo-list');
+        const registerForm = document.getElementById('register-form');
 
         // Fetch all todos with comments
         function fetchTodos() {
@@ -131,6 +132,7 @@
                 .catch(error => console.error('Error fetching todos:', error));
         }
 
+
         // Fetch comments for a todo
         function fetchComments(todoId) {
             fetch(`${API_BASE_URL}/comment/${todoId}`)
@@ -159,7 +161,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ comment })
+                    body: JSON.stringify({ "todoId": todoId, "content":comment })
                 })
                     .then(response => response.json())
                     .then(data => {
@@ -202,8 +204,8 @@
             const title = document.getElementById('update-title').value;
             const password = document.getElementById('update-password-title').value;
 
-            fetch(`${API_BASE_URL}/title/${updateTodoId}`, {
-                method: 'PATCH',
+            fetch(`${API_BASE_URL}/update/title/${updateTodoId}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -222,8 +224,8 @@
             const content = document.getElementById('update-content').value;
             const password = document.getElementById('update-password-content').value;
 
-            fetch(`${API_BASE_URL}/content/${updateTodoId}`, {
-                method: 'PATCH',
+            fetch(`${API_BASE_URL}/update/content/${updateTodoId}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -242,8 +244,8 @@
             const manager = document.getElementById('update-manager').value;
             const password = document.getElementById('update-password-manager').value;
 
-            fetch(`${API_BASE_URL}/manager/${updateTodoId}`, {
-                method: 'PATCH',
+            fetch(`${API_BASE_URL}/update/manager/${updateTodoId}`, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -261,7 +263,7 @@
         document.getElementById('confirm-delete').addEventListener('click', function() {
             const password = document.getElementById('delete-password').value;
 
-            fetch(`${API_BASE_URL}/${deleteTodoId}`, {
+            fetch(`${API_BASE_URL}/delete/${deleteTodoId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'

@@ -2,6 +2,7 @@ package org.sparta.spring_basic_project.controller;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.sparta.spring_basic_project.entity.MediaTypeUtiles;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
+@Slf4j
 @RestController
 public class FileController {
     @PostMapping( "/fileUpload")
