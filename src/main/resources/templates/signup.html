@@ -7,43 +7,81 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
-    <meta charset="UTF-8">
     <title>회원가입 페이지</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         function onclickAdmin() {
-            // Get the checkbox
             var checkBox = document.getElementById("admin-check");
-            // Get the output text
             var box = document.getElementById("admin-token");
 
-            // If the checkbox is checked, display the output text
             if (checkBox.checked == true){
                 box.style.display = "block";
             } else {
                 box.style.display = "none";
             }
         }
+
+        function onSignup(event) {
+            event.preventDefault();
+
+            let username = $('#username').val();
+            let password = $('#password').val();
+            let name = $('#name').val();
+            let adminToken = $('#admin-check').is(':checked') ? $('#admin-token').val() : null;
+
+            let signupData = {username: username, password: password, name: name};
+            if (adminToken) {
+                signupData.adminToken = adminToken;
+            }
+
+            console.log("Signup Data:", signupData);
+
+            $.ajax({
+                type: "POST",
+                url: `/api/user/signup`,
+                contentType: "application/json",
+                data: JSON.stringify(signupData),
+                success: function(response) {
+                    alert("회원 가입 성공");
+                    window.location.href = '/api/user/login';
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    if (jqXHR.status === 400) {
+                        let errors = jqXHR.responseJSON;
+                        let errorMessage = '';
+                        for (let key in errors) {
+                            errorMessage += `${errors[key]}\n`;
+                        }
+                        alert(errorMessage);
+                    } else {
+                        alert("회원 가입 실패: " + jqXHR.responseText);
+                        window.location.href = '/api/user/signup?error';
+                    }
+                }
+            });
+        }
+
     </script>
 </head>
 <body>
 <div id="login-form">
     <div id="login-title">Sign up Select Shop</div>
 
-    <form action="/api/user/signup" method="post">
-        <div class="login-id-label">Username</div>
-        <input type="text" name="username" placeholder="Username" class="login-input-box">
+    <form action="/api/user/signup" method="post" onsubmit="onSignup(event)">
+        <div class="login-id-label">별명</div>
+        <input type="text" id="username" name="username" placeholder="Username" class="login-input-box" required>
 
-        <div class="login-id-label">Password</div>
-        <input type="password" name="password" class="login-input-box">
+        <div class="login-id-label">비밀번호</div>
+        <input type="password" id="password" name="password" class="login-input-box" required>
 
-        <div class="login-id-label">E-mail</div>
-        <input type="text" name="email" placeholder="E-mail" class="login-input-box">
+        <div class="login-id-label">이름</div>
+        <input type="text" id="name" name="name" placeholder="이름" class="login-input-box" required>
 
         <div>
             <input id="admin-check" type="checkbox" name="admin" onclick="onclickAdmin()" style="margin-top: 40px;">관리자
             <input id="admin-token" type="password" name="adminToken" placeholder="관리자 암호" class="login-input-box" style="display:none">
         </div>
-        <button id="login-id-submit">회원 가입</button>
+        <button id="login-id-submit" type="submit">회원 가입</button>
     </form>
 </div>
 </body>

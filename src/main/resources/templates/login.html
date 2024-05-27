@@ -36,7 +36,9 @@
     });
 
     const host = 'http://' + window.location.host;
-
+    function getTokenFromSessionStorage() {
+        return sessionStorage.getItem('Authorization');
+    }
     function onLogin() {
         let username = $('#username').val();
         let password = $('#password').val();
@@ -53,28 +55,11 @@
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 alert("Login Fail");
+                console.log(this.error);
                 window.location.href = host + '/api/user/login-page?error';
             }
         });
     }
-
-    // // Add the authorization header to all AJAX requests
-    // $.ajaxPrefilter(function (options, originalOptions, jqXHR) {
-    //     if (authHeader) {
-    //         jqXHR.setRequestHeader('Authorization', 'Bearer ' + authHeader);
-    //     }
-    // });
-    //
-    // // Set the authorization header in the session storage
-    // sessionStorage.setItem('Authorization', 'Bearer ' + authHeader);
-    //
-    // // Retrieve the authorization header from the session storage in subsequent requests
-    // $(document).ajaxSend(function (event, jqXHR, settings) {
-    //     let authHeader = sessionStorage.getItem('Authorization');
-    //     if (authHeader) {
-    //         jqXHR.setRequestHeader('Authorization', authHeader);
-    //     }
-    // });
 </script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 package org.sparta.spring_basic_project.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sparta.spring_basic_project.dto.SignupRequestDto;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
+//@Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -29,26 +30,18 @@ public class UserController {
         return "login";
     }
 
-
-
     @GetMapping("/user/signup")
     public String signupPage() {
         return "signup";
     }
 
     @PostMapping("/user/signup")
-    public String signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
-        // Validation 예외처리
-        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-        if(fieldErrors.size() > 0) {
-            for (FieldError fieldError : bindingResult.getFieldErrors()) {
-                log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
-            }
-            return "redirect:/api/user/signup";
+    public String signup(@RequestBody @Valid SignupRequestDto requestDto) {
+        try {
+            userService.signup(requestDto);
+        } catch (Exception e) {
+            throw new ValidationException("회원 가입 중 오류가 발생했습니다.", e);
         }
-
-        userService.signup(requestDto);
-
         return "redirect:/api/user/login-page";
     }
 

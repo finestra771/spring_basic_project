@@ -12,10 +12,13 @@ import lombok.Setter;
 //@NoArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
-public class User {
+public class User extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    private String name;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -23,17 +26,14 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
-    public User(String username, String password, String email, UserRoleEnum role) {
+    public User( String name, UserRoleEnum role, String username, String password) {
+        this.name = name;
+        this.role = role;
         this.username = username;
         this.password = password;
-        this.email = email;
-        this.role = role;
     }
 }
